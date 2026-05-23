@@ -14,7 +14,7 @@ export async function requestQuote(data: {
 
   const { data: brokerUser } = await supabase.from('broker_users').select('broker_id').eq('user_profile_id', user.id).single()
   
-  if (!brokerUser) throw new Error('Only broker users can request quotes')
+  if (!brokerUser || !brokerUser.broker_id) throw new Error('Only broker users can request quotes')
 
   const { data: broker } = await supabase.from('brokers').select('organization_id').eq('id', brokerUser.broker_id).single()
 
