@@ -48,10 +48,10 @@ export async function processCheckout(data: {
     organization_id: profile.organization_id,
     session_id: session!.id,
     total_amount: data.totalAmount,
-    making_charge: data.makingCharge,
-    vat_amount: 0,
+    tax_amount: 0,
+    net_amount: data.totalAmount,
     status: 'completed',
-    processed_by: user.id
+    created_by: user.id
   }).select().single()
 
   if (saleError) throw saleError
