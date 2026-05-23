@@ -81,7 +81,7 @@ export async function acceptQuote(quoteId: string) {
   const { data: quote } = await supabase.from('quotes').select('*').eq('id', quoteId).single()
   if (!quote) throw new Error('Quote not found')
   
-  if (new Date(quote.expiry_timestamp) < new Date()) {
+  if (!quote.expiry_timestamp || new Date(quote.expiry_timestamp) < new Date()) {
     await supabase.from('quotes').update({ status: 'expired' }).eq('id', quoteId)
     throw new Error('Quote expired')
   }
