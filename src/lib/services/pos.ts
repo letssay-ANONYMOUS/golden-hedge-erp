@@ -40,7 +40,7 @@ export async function processCheckout(data: {
     organization_id: profile.organization_id,
     cashier_id: user.id,
     status: 'open',
-    opening_balance: 0
+    opening_cash: 0
   }).select().single()
 
   // 3. Create POS Sale
