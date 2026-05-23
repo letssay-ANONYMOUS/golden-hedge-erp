@@ -2731,7 +2731,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      business_dashboard: {
+        Row: {
+          pending_payment_amount: number | null
+          sales_this_month: number | null
+          sales_today: number | null
+        }
+        Relationships: []
+      }
+      compliance_dashboard: {
+        Row: {
+          active_holds: number | null
+          open_aml_alerts: number | null
+          open_compliance_cases: number | null
+        }
+        Relationships: []
+      }
+      inventory_dashboard: {
+        Row: {
+          metal_id: string | null
+          total_allocated_grams: number | null
+          total_available_grams: number | null
+          total_reserved_grams: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_bars_metal_id_fkey"
+            columns: ["metal_id"]
+            isOneToOne: false
+            referencedRelation: "metals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       user_broker_id: { Args: never; Returns: string }
