@@ -46,15 +46,27 @@ export default function OnboardingPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Full Legal Name</label>
-              <input
-                name="full_name"
-                type="text"
-                required
-                className="block w-full rounded-xl border-0 bg-zinc-950/50 py-3 px-4 text-white ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-amber-500 transition-all sm:text-sm"
-                placeholder="John Doe"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">First Name</label>
+                <input
+                  name="first_name"
+                  type="text"
+                  required
+                  className="block w-full rounded-xl border-0 bg-zinc-950/50 py-3 px-4 text-white ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-amber-500 transition-all sm:text-sm"
+                  placeholder="John"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Last Name</label>
+                <input
+                  name="last_name"
+                  type="text"
+                  required
+                  className="block w-full rounded-xl border-0 bg-zinc-950/50 py-3 px-4 text-white ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-amber-500 transition-all sm:text-sm"
+                  placeholder="Doe"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">Phone Number</label>
