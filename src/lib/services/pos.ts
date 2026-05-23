@@ -29,7 +29,7 @@ export async function processCheckout(data: {
   
   // 1. Lock bars
   const { error: lockError } = await supabase.from('inventory_bars')
-    .update({ status: 'sold' })
+    .update({ status: 'delivered' })
     .in('id', data.barIds)
     .eq('status', 'available')
     
