@@ -57,14 +57,12 @@ export async function processCheckout(data: {
   if (saleError) throw saleError
 
   // 4. Record Payment
-  await supabase.from('payments').insert({
-    organization_id: profile.organization_id,
-    payment_type: 'inbound',
+  await supabase.from('pos_payments').insert({
+    sale_id: sale!.id,
+    payment_method: data.paymentMethod,
     amount: data.totalAmount,
     currency: 'USD',
-    method: data.paymentMethod,
-    status: 'confirmed',
-    reference_number: `POS-${sale.id}`
+    reference_number: `POS-${sale!.id}`
   })
 
   await logAuditEvent('pos_checkout', 'pos_sales', sale.id, data)
