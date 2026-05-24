@@ -1285,6 +1285,30 @@ export type Database = {
           },
         ]
       }
+      kyc_webhook_logs: {
+        Row: {
+          applicant_id: string | null
+          event_type: string | null
+          id: string
+          payload: Json | null
+          processed_at: string | null
+        }
+        Insert: {
+          applicant_id?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+        }
+        Update: {
+          applicant_id?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+        }
+        Relationships: []
+      }
       live_prices: {
         Row: {
           currency: string | null
@@ -2637,6 +2661,9 @@ export type Database = {
           first_name: string | null
           id: string
           is_active: boolean | null
+          kyc_applicant_id: string | null
+          kyc_status: string | null
+          kyc_verified_at: string | null
           last_name: string | null
           organization_id: string | null
           role: Database["public"]["Enums"]["user_role_enum"]
@@ -2647,6 +2674,9 @@ export type Database = {
           first_name?: string | null
           id: string
           is_active?: boolean | null
+          kyc_applicant_id?: string | null
+          kyc_status?: string | null
+          kyc_verified_at?: string | null
           last_name?: string | null
           organization_id?: string | null
           role?: Database["public"]["Enums"]["user_role_enum"]
@@ -2657,6 +2687,9 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_active?: boolean | null
+          kyc_applicant_id?: string | null
+          kyc_status?: string | null
+          kyc_verified_at?: string | null
           last_name?: string | null
           organization_id?: string | null
           role?: Database["public"]["Enums"]["user_role_enum"]

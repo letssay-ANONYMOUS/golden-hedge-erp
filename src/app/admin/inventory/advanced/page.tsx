@@ -42,11 +42,9 @@ export default function AdvancedInventoryPage() {
 
       const newBars = Array.from({ length: numBars }).map((_, i) => ({
         lot_id: lotId,
-        serial_number: `GH-${lotId.substring(0, 4).toUpperCase()}-${String(i+1).padStart(3, '0')}`,
-        weight: 100,
-        status: 'available',
-        supplier_id: lots.find(l => l.id === lotId)?.supplier_id,
-        location_id: lots.find(l => l.id === lotId)?.location_id
+        bar_serial_number: `GH-${lotId.substring(0, 4).toUpperCase()}-${String(i+1).padStart(3, '0')}`,
+        weight_grams: 100,
+        status: 'available' as const
       }))
 
       const { error } = await supabase.from('inventory_bars').insert(newBars)
