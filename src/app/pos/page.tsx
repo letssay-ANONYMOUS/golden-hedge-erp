@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { getAvailableProducts, processCheckout } from '@/lib/services/pos'
 import { Toaster, toast } from 'sonner'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 export default function PosInterface() {
   const [products, setProducts] = useState<any[]>([])
