@@ -26,6 +26,7 @@ export async function getDashboardMetrics() {
   const salesByDate: Record<string, number> = {}
   if (recentSales) {
     recentSales.forEach(sale => {
+      if (!sale.created_at) return;
       const dateStr = new Date(sale.created_at).toLocaleDateString('en-US', { weekday: 'short' })
       salesByDate[dateStr] = (salesByDate[dateStr] || 0) + Number(sale.total_amount)
     })
