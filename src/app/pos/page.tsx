@@ -6,6 +6,7 @@ import { getAvailableProducts, processCheckout } from '@/lib/services/pos'
 import { Toaster, toast } from 'sonner'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { calculateItemPrice } from '@/lib/services/spotPrice'
 
 export default function PosInterface() {
   const [products, setProducts] = useState<any[]>([])
@@ -26,8 +27,8 @@ export default function PosInterface() {
       toast.error('Item already in cart')
       return
     }
-    // Calculate base price dynamically
-    const basePrice = product.metal_id === 'XAU' ? product.weight_grams * 70 : product.weight_grams * 1
+    // Calculate precise base price dynamically via PRD formula
+    const basePrice = calculateItemPrice(product.metal_id, product.weight_grams)
     setCart([...cart, { ...product, customPrice: basePrice, basePrice }])
   }
 
@@ -39,14 +40,8 @@ export default function PosInterface() {
     setCart(cart.filter(item => item.id !== id))
   }
 
-  // Simplified pricing: Assume base price of $70/g for Gold and $1/g for Silver (in reality this comes from live_prices)
-  const calculatePrice = (product: any) => {
-    const rate = product.metal_id === 'XAU' ? 70 : 1
-    return product.weight_grams * rate
-  }
-
   const subtotal = cart.reduce((sum, item) => sum + Number(item.customPrice), 0)
-  const makingCharge = cart.length * 50 // $50 flat making charge per bar
+  const makingCharge = cart.length * 50 // $50 flat making charge per bar or standard fee
   const total = subtotal + makingCharge
 
   const handleCheckout = async () => {
@@ -118,14 +113,14 @@ export default function PosInterface() {
               {showReceipt.items.map((item: any, i: number) => (
                 <div key={i} className="text-sm flex justify-between">
                   <span>{item.weight_grams}g {item.metal_id} Bar</span>
-                  <span>${Number(item.customPrice).toFixed(2)}</span>
+                  <span>AED {Number(item.customPrice).toFixed(2)}</span>
                 </div>
               ))}
             </div>
             <div className="text-sm space-y-1 mb-6">
-              <div className="flex justify-between"><span>Subtotal:</span><span>${showReceipt.subtotal.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>Making Charge:</span><span>${showReceipt.makingCharge.toFixed(2)}</span></div>
-              <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Total:</span><span>${showReceipt.total.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Subtotal:</span><span>AED {showReceipt.subtotal.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Making Charge:</span><span>AED {showReceipt.makingCharge.toFixed(2)}</span></div>
+              <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t-2 border-black"><span>Total:</span><span>AED {showReceipt.total.toFixed(2)}</span></div>
             </div>
             <div className="text-center text-xs text-zinc-500 uppercase mt-8 pt-4 border-t border-dashed border-zinc-400">
               <p>Thank you for your business.</p>
@@ -179,7 +174,7 @@ export default function PosInterface() {
                   </div>
                   <h3 className="font-semibold text-zinc-900 dark:text-white">{product.metal_id} Bar</h3>
                   <p className="text-sm text-zinc-500 mt-1">{product.weight_grams}g • SN: {product.serial_number?.substring(0,8) || product.id.substring(0,6)}</p>
-                  <div className="mt-4 text-lg font-bold text-amber-600">${(product.metal_id === 'XAU' ? product.weight_grams * 70 : product.weight_grams * 1).toLocaleString()}</div>
+                  <div className="mt-4 text-lg font-bold text-amber-600">AED {calculateItemPrice(product.metal_id, product.weight_grams).toLocaleString()}</div>
                 </motion.div>
               ))}
               {products.length === 0 && <div className="col-span-full text-center text-zinc-500 py-12">No available inventory.</div>}
@@ -202,9 +197,9 @@ export default function PosInterface() {
                  >
                    <div className="flex-1 mr-4">
                      <h4 className="font-medium text-sm text-zinc-900 dark:text-white">{item.metal_id} {item.weight_grams}g</h4>
-                     <p className="text-xs text-zinc-500 mt-0.5 mb-2">Base: ${item.basePrice.toLocaleString()}</p>
+                     <p className="text-xs text-zinc-500 mt-0.5 mb-2">Base: AED {item.basePrice.toLocaleString()}</p>
                      <div className="flex items-center gap-2">
-                       <span className="text-xs text-zinc-500">$</span>
+                       <span className="text-xs text-zinc-500">AED</span>
                        <input 
                          type="number" 
                          value={item.customPrice} 
@@ -224,15 +219,15 @@ export default function PosInterface() {
           <div className="p-6 border-t border-zinc-200 dark:border-white/5 bg-zinc-50 dark:bg-zinc-950">
              <div className="flex justify-between mb-3 text-sm text-zinc-500">
                 <span>Subtotal</span>
-                <span className="font-medium text-zinc-900 dark:text-white">${subtotal.toLocaleString()}</span>
+                <span className="font-medium text-zinc-900 dark:text-white">AED {subtotal.toLocaleString()}</span>
              </div>
              <div className="flex justify-between mb-6 text-sm text-zinc-500">
                 <span>Making Charge</span>
-                <span className="font-medium text-zinc-900 dark:text-white">${makingCharge.toLocaleString()}</span>
+                <span className="font-medium text-zinc-900 dark:text-white">AED {makingCharge.toLocaleString()}</span>
              </div>
              <div className="flex justify-between mb-6 font-bold text-2xl text-zinc-900 dark:text-white">
                 <span>Total</span>
-                <span className="text-amber-500">${total.toLocaleString()}</span>
+                <span className="text-amber-500">AED {total.toLocaleString()}</span>
              </div>
              <button 
                onClick={handleCheckout}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Toaster, toast } from 'sonner'
 import { requestQuote, priceQuote, acceptQuote } from '@/lib/services/quotes'
-import { subscribeToSpotPrices } from '@/lib/services/spotPrice'
+import { subscribeToSpotPrices, calculateItemPrice } from '@/lib/services/spotPrice'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 
@@ -66,12 +66,12 @@ export default function QuotesPage() {
     }
   }
 
-  const handlePriceQuote = async (quoteId: string, weight: number) => {
+  const handlePriceQuote = async (quoteId: string, weight: number, metalId: 'XAU'|'XAG') => {
     setIsActioning(true)
     try {
-      // Simulate dealer pricing algorithm
-      const baseValue = weight * 70 // $70/g
-      const premium = 50 // flat premium
+      // Simulate dealer pricing algorithm using precise calculator
+      const baseValue = calculateItemPrice(metalId, weight)
+      const premium = metalId === 'XAU' ? 50 : 10 // flat premium AED
       const total = baseValue + premium
 
       await priceQuote(quoteId, {
@@ -199,7 +199,7 @@ export default function QuotesPage() {
 
                     <div className="flex gap-2 w-full sm:w-auto mt-2">
                       {(role === 'dealer' || role === 'super_admin') && quote.status === 'requested' && (
-                        <Button disabled={isActioning} onClick={() => handlePriceQuote(quote.id, quote.weight_grams)} className="w-full bg-amber-600 hover:bg-amber-500 text-white rounded-lg">
+                        <Button disabled={isActioning} onClick={() => handlePriceQuote(quote.id, quote.weight_grams, quote.metal_id)} className="w-full bg-amber-600 hover:bg-amber-500 text-white rounded-lg">
                           Set Price
                         </Button>
                       )}
