@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Toaster, toast } from 'sonner'
 import { requestQuote, priceQuote, acceptQuote } from '@/lib/services/quotes'
+import { subscribeToSpotPrices } from '@/lib/services/spotPrice'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 
@@ -12,11 +13,17 @@ export default function QuotesPage() {
   const [role, setRole] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isActioning, setIsActioning] = useState(false)
+  const [spotPrices, setSpotPrices] = useState({ XAU: 0, XAG: 0 })
   const supabase = createClient()
 
   useEffect(() => {
     loadQuotes()
     checkRole()
+    
+    const unsubscribe = subscribeToSpotPrices((prices) => {
+      setSpotPrices(prices)
+    })
+    return () => unsubscribe()
   }, [])
 
   const checkRole = async () => {
@@ -100,9 +107,25 @@ export default function QuotesPage() {
   return (
     <div className="space-y-8 pb-12 font-sans">
       <Toaster theme="dark" position="top-center" />
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-        <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Trading Desk</h2>
-        <p className="text-sm text-zinc-500 mt-1">Request, price, and execute bullion quotes.</p>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Trading Desk</h2>
+          <p className="text-sm text-zinc-500 mt-1">Request, price, and execute bullion quotes.</p>
+        </div>
+        
+        {/* Live Spot Prices Banner */}
+        <div className="flex gap-4">
+          <div className="bg-zinc-950 px-4 py-2 rounded-xl border border-white/10 flex items-center gap-3">
+            <div className="text-amber-500 font-bold">XAU</div>
+            <div className="text-white font-mono">${spotPrices.XAU.toFixed(2)}</div>
+            <motion.div animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          </div>
+          <div className="bg-zinc-950 px-4 py-2 rounded-xl border border-white/10 flex items-center gap-3">
+            <div className="text-zinc-300 font-bold">XAG</div>
+            <div className="text-white font-mono">${spotPrices.XAG.toFixed(2)}</div>
+            <motion.div animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.5 }} className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          </div>
+        </div>
       </motion.div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -17,16 +17,18 @@ export async function completeProfile(formData: FormData) {
   // Note: RLS prevents users from inserting into users_profile if the trigger already created it. 
   // Wait, our trigger `01_core.sql` creates the profile on auth.users insert.
   // So we just UPDATE the existing profile.
+  const applicantId = `APP-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+
   const { error } = await supabase.from('users_profile').update({
     first_name: firstName,
     last_name: lastName,
-    // Add phone or other metadata if we had it, but we only have full_name and role.
-    // requested_role would ideally go to a separate request table, or we just keep it simple.
+    kyc_applicant_id: applicantId,
+    kyc_status: 'pending'
   }).eq('id', user.id)
 
   if (error) {
     return { error: error.message }
   }
 
-  redirect('/admin')
+  return { applicantId }
 }
