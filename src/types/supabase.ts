@@ -860,6 +860,106 @@ export type Database = {
           },
         ]
       }
+      hedge_config: {
+        Row: {
+          auto_hedge_enabled: boolean
+          exposure_threshold_grams: number
+          hedge_increment_grams: number
+          id: string
+          max_slippage_pct: number
+          metal_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          auto_hedge_enabled?: boolean
+          exposure_threshold_grams: number
+          hedge_increment_grams: number
+          id?: string
+          max_slippage_pct?: number
+          metal_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          auto_hedge_enabled?: boolean
+          exposure_threshold_grams?: number
+          hedge_increment_grams?: number
+          id?: string
+          max_slippage_pct?: number
+          metal_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hedge_config_metal_id_fkey"
+            columns: ["metal_id"]
+            isOneToOne: true
+            referencedRelation: "metals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hedge_orders: {
+        Row: {
+          broker_order_id: string | null
+          created_at: string
+          created_by: string | null
+          direction: Database["public"]["Enums"]["hedge_direction"]
+          error_message: string | null
+          executed_price_usd: number | null
+          id: string
+          metal_id: string
+          quantity_grams: number
+          quantity_oz: number
+          slippage_pct: number | null
+          status: Database["public"]["Enums"]["hedge_order_status"]
+          trigger_price_usd: number
+          updated_at: string
+        }
+        Insert: {
+          broker_order_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          direction: Database["public"]["Enums"]["hedge_direction"]
+          error_message?: string | null
+          executed_price_usd?: number | null
+          id?: string
+          metal_id: string
+          quantity_grams: number
+          quantity_oz: number
+          slippage_pct?: number | null
+          status?: Database["public"]["Enums"]["hedge_order_status"]
+          trigger_price_usd: number
+          updated_at?: string
+        }
+        Update: {
+          broker_order_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          direction?: Database["public"]["Enums"]["hedge_direction"]
+          error_message?: string | null
+          executed_price_usd?: number | null
+          id?: string
+          metal_id?: string
+          quantity_grams?: number
+          quantity_oz?: number
+          slippage_pct?: number | null
+          status?: Database["public"]["Enums"]["hedge_order_status"]
+          trigger_price_usd?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hedge_orders_metal_id_fkey"
+            columns: ["metal_id"]
+            isOneToOne: false
+            referencedRelation: "metals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_bars: {
         Row: {
           bar_serial_number: string | null
@@ -2797,6 +2897,23 @@ export type Database = {
           },
         ]
       }
+      net_exposure: {
+        Row: {
+          hedged_short_grams: number | null
+          metal_id: string | null
+          net_exposure_grams: number | null
+          physical_held_grams: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_bars_metal_id_fkey"
+            columns: ["metal_id"]
+            isOneToOne: false
+            referencedRelation: "metals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       user_broker_id: { Args: never; Returns: string }
@@ -2815,6 +2932,13 @@ export type Database = {
         | "held"
         | "rejected"
         | "frozen"
+      hedge_direction: "short" | "long"
+      hedge_order_status:
+        | "pending"
+        | "partial_fill"
+        | "filled"
+        | "failed"
+        | "cancelled"
       inventory_status:
         | "available"
         | "reserved"
@@ -3010,6 +3134,14 @@ export const Constants = {
         "held",
         "rejected",
         "frozen",
+      ],
+      hedge_direction: ["short", "long"],
+      hedge_order_status: [
+        "pending",
+        "partial_fill",
+        "filled",
+        "failed",
+        "cancelled",
       ],
       inventory_status: [
         "available",
